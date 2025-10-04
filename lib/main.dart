@@ -5,10 +5,18 @@ import 'package:halal_verify/theme/util.dart';
 import 'package:halal_verify/theme_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+
+  await Supabase.initialize(
+    url: 'https://xqjzjivdtkvdvnhvwbhw.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxanpqaXZkdGt2ZHZuaHZ3Ymh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzOTY1MzMsImV4cCI6MjA3NDk3MjUzM30.0j96xbGKgtt1sa179s4CbSpeJYW2cGZ6krjDUYjeATs',
+  );
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeHandlerProvider(prefs),

@@ -1,9 +1,11 @@
 import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FloatingNavbar extends StatelessWidget {
-  const FloatingNavbar({super.key});
+  FloatingNavbar({super.key});
+  final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +36,23 @@ class FloatingNavbar extends StatelessWidget {
                         detectionSpeed: DetectionSpeed.normal,
                         detectionTimeoutMs: 500,
                       ),
-                      onDetect: (BarcodeCapture capture) {
-                        debugPrint(
-                          "Barcode detected: ${capture.barcodes.first.rawValue}",
+                      onDetect: (BarcodeCapture capture) async {
+                        final cxt = context;
+                        final barcode = capture.barcodes.first.rawValue ?? "";
+                        debugPrint("Barcode detected: ${barcode}");
+
+                        Navigator.of(cxt).pop();
+
+                        final product = await supabase.functions.invoke(
+                          "get-product",
+                          method: HttpMethod.get,
+                          queryParameters: Map.from({"barcode": barcode}),
                         );
 
-                        Navigator.of(context).pop();
+                        debugPrint("Product details: $product");
 
                         showDialog<String>(
-                          context: context,
+                          context: cxt,
                           builder: (BuildContext context) => Dialog(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
